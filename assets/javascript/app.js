@@ -21,11 +21,12 @@ $("button").on("click", function () {
 });
 
 // onclick event handler for the gifts (to start and stop)
-$("img").on("click", function () {
+$(document).on("click", "#gif", function () {
     // store state and url to local variables
     var state = $(this).attr("gifState");
     var dataStill = $(this).attr("data-still");
     var dataActive = $(this).attr("data-active");
+    
     console.log(state, dataStill, dataActive)
     if (state == "still") { // from still to active
         $(this).attr("src", dataActive);
@@ -36,6 +37,7 @@ $("img").on("click", function () {
     }
 
 });
+
 
 function displayGif() {
     // URL format // WglqBM8Efyi3PduzHHOCmsshRvMJ8Sep
@@ -50,6 +52,7 @@ function displayGif() {
             var stillUrl = response.data[j].images.fixed_height_still.url;
             var activeUrl = response.data[j].images.fixed_height.url;
             var gif = $("<img>"); // create image tag
+            gif.attr("id", "gif"); // adding an id of gif
             gif.attr("src", stillUrl); // start off with src being the still version
             gif.attr("gifState", "still"); // and start off with gifState attribute being still
             gif.attr("data-still", stillUrl); // store the still version gif into 'data-still' attribute
@@ -57,6 +60,5 @@ function displayGif() {
             gif.attr("alt", "gifimage"); // if gif link breaks, at least I'll see the alternative name text
             $("#gifDisplay").prepend(gif);
         }
-
-    });
+    }); // close AJAX call
 }
