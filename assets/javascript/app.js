@@ -1,40 +1,43 @@
 
 
 // Theme topics array (food)
-var topics = ["apple", "banana", "carrot", "doughnut", "egg", "pizza", "sushi"]
+var topics = ["apple", "bread", "carrot", "doughnut", "egg", "pizza", "sushi"];
 var searchTerm;
+
+makeButtons(); // default loading buttons for the initial topics array
 
 function makeButtons() {
     // Generates buttons for each index in topics array
     for (var i = 0; i < topics.length; i++) {
         var button = $("<button>");
-        button.addClass("btn btn-info mr-1 topicButton");
+        button.addClass("btn btn-info m-1 topicButton"); // add classes for bootstrap button type, margin, id to refer to later
         button.text(topics[i]);
         button.val(topics[i]);
         $("#buttonDisplay").append(button); // appends button to the buttonDisplay div
     }
 }
 
-makeButtons(); // default loading buttons for the initial topics array
-
 // onclick event handler for submit button
 $(document).on("click", "#submitButton", function () {
     event.preventDefault(); // prevents the submit button default behavior but didn't need it here
-    var newTopic = $("#form").val().trim();
-    if (!topics.includes(newTopic)) { // won't add a new button if the newTopic is already in the topics array
+    var newTopic = $("#form").val().trim().toLowerCase(); // removes spaces and lowercases before storing value
+    $("#form").val(""); // clears the form textarea
+    if (newTopic === "") { // if the form was blank but submit was pushed, it won't generate a blank button
+        alert("Please type in a topic to search.");
+    } else if (!topics.includes(newTopic)) { // won't add a new button if the newTopic is already in the topics array
         topics.push(newTopic); // adding the new topic from the form to the topics array
         $("#buttonDisplay").empty(); // remove the previous buttons
         makeButtons(); // display the new updated array for buttons
     } else {
-        alert("You already have this topic displayed")
+        alert("You already have this topic displayed."); // the typed topic is already in the topics array
     }
 });
 
-// onclick event handler for buttons
+// onclick event handler for the 'topic buttons' on the top of the page
 $(document).on("click", ".topicButton", function () { // topicButtons are the teal topics button on the top of the page
     searchTerm = $(this).val().trim();
     $("#gifDisplay").empty(); // Clears the gifs that are already displayed
-    displayGif(); // ajax call
+    displayGif();
 });
 
 // onclick event handler for the gifts (to start and stop)
@@ -53,16 +56,15 @@ $(document).on("click", "#gif", function () {
     }
 });
 
-
+// Function for AJAX call to Giphy, return 10 gifs and show the gif in gifDisplay div
 function displayGif() {
-    // URL format // WglqBM8Efyi3PduzHHOCmsshRvMJ8Sep
     var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=WglqBM8Efyi3PduzHHOCmsshRvMJ8Sep&q=" + searchTerm + "&limit=10";
 
+    // AJAX call
     $.ajax({
         url: queryURL,
         method: "GET"
     }).then(function (response) {
-
         for (var j = 0; j < response.data.length; j++) { //each gif
             var stillUrl = response.data[j].images.fixed_height_still.url;
             var activeUrl = response.data[j].images.fixed_height.url;
@@ -81,7 +83,7 @@ function displayGif() {
             card.append("<p>Rating: " + rating + "</p>"); // Rating is above the gifs in the demo youtube video so following that
             card.append(gif);
             $("#gifDisplay").prepend(card);
-        } // close for loop for each gif
+        } // close for loop
 
     }); // close AJAX call
-}
+} // close displayGif function
