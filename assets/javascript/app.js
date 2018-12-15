@@ -1,25 +1,25 @@
 
 
 // Theme topics array (food)
-var topics = ["apple", "banana", "carrot", "doughnut", "eggplant", "pizza", "sushi"]
+var topics = ["apple", "banana", "carrot", "doughnut", "egg", "pizza", "sushi"]
 var searchTerm;
 
 function makeButtons() {
     // Generates buttons for each index in topics array
     for (var i = 0; i < topics.length; i++) {
         var button = $("<button>");
-        button.addClass("btn btn-info mr-1");
+        button.addClass("btn btn-info mr-1 topicButton");
         button.text(topics[i]);
         button.val(topics[i]);
         $("#buttonDisplay").append(button); // appends button to the buttonDisplay div
     }
 }
 
-makeButtons(); // default
+makeButtons(); // default loading buttons for the initial topics array
 
 // onclick event handler for submit button
-$("#submitButton").on("click", function () {
-    // event.preventDefault(); // prevents the submit button default behavior but didn't need it here
+$(document).on("click", "#submitButton", function () {
+    event.preventDefault(); // prevents the submit button default behavior but didn't need it here
     var newTopic = $("#form").val().trim();
     if (!topics.includes(newTopic)) { // won't add a new button if the newTopic is already in the topics array
         topics.push(newTopic); // adding the new topic from the form to the topics array
@@ -30,11 +30,10 @@ $("#submitButton").on("click", function () {
     }
 });
 
-
 // onclick event handler for buttons
-$(document).on("click", "button", function () { // needs to be document because my buttons change if form is entered
+$(document).on("click", ".topicButton", function () { // topicButtons are the teal topics button on the top of the page
     searchTerm = $(this).val().trim();
-    $("#gifDisplay").empty();
+    $("#gifDisplay").empty(); // Clears the gifs that are already displayed
     displayGif(); // ajax call
 });
 
@@ -45,10 +44,10 @@ $(document).on("click", "#gif", function () {
     var dataStill = $(this).attr("data-still");
     var dataActive = $(this).attr("data-active");
 
-    if (state == "still") { // from still to active
+    if (state == "still") { // from still to active gifs
         $(this).attr("src", dataActive);
         $(this).attr("gifState", "active")
-    } else { // active to still
+    } else { // active gif to still
         $(this).attr("src", dataStill);
         $(this).attr("gifState", "still")
     }
@@ -79,8 +78,8 @@ function displayGif() {
             // Putting together the gif with the rating and prepending to gifDisplay
             var card = $("<div>");
             card.addClass("card img-fluid"); // adding class for card 
+            card.append("<p>Rating: " + rating + "</p>"); // Rating is above the gifs in the demo youtube video so following that
             card.append(gif);
-            card.append("<p>Rating: " + rating + "</p>");
             $("#gifDisplay").prepend(card);
         } // close for loop for each gif
 
